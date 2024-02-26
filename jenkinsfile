@@ -1,47 +1,26 @@
-pipeline
+
+node('built-in') 
 {
-    agent any
-    stages
+    stage('ContinuousDownload') 
     {
-        stage('countDownload')
-        {
-            steps
-            {
-             git 'https://github.com/ramkumarvaddi/newmaven.git'
-            }
-        }
-        stage('countbuild')
-        {
-            steps
-            {
-              sh 'mvn package'
-            }
-        }
-        stage('countdeployment')
-        {
-            steps
-            {
-             deploy adapters: [tomcat9(credentialsId: '4bb34d9c-6c43-4110-bbc1-8cf0f820367d', path: '', url: 'http://172.31.32.47:8080')], contextPath: 'ram', war: '**/*.war'
-            }
-        }
-         stage('countTesting')
-        {
-            steps
-            {
-              git 'https://github.com/intelliqittrainings/FunctionalTesting.git'
-              
-              sh 'java -jar /var/lib/jenkins/workspace/rahul/testing.jar'
-              
-              
-            }
-        }
-        stage('countdelivery')
-        {
-            steps
-            {
-             deploy adapters: [tomcat9(credentialsId: '4bb34d9c-6c43-4110-bbc1-8cf0f820367d', path: '', url: 'http://172.31.39.248:8080')], contextPath: 'ram', war: '**/*.war'
-            }
-        }
-        
+       git 'https://github.com/intelliqittrainings/maven.git'
+    }
+    stage('ContinuousBuild') 
+    {
+       sh 'mvn package'
+    }
+    stage('ContinuousDeploy') 
+    {
+      deploy adapters: [tomcat9(credentialsId: '4bb34d9c-6c43-4110-bbc1-8cf0f820367d', path: '', url: 'http://172.31.32.47:8080')], contextPath: 'ram', war: '**/*.war'
+    }
+    stage('ContinuousTesting') 
+    {
+      git 'https://github.com/intelliqittrainings/FunctionalTesting.git'
+      sh 'java -jar /var/lib/jenkins/workspace/scriptedpipeline/testing.jar'
+      
+    }
+    stage('ContinuousDelivery') 
+    {
+      deploy adapters: [tomcat9(credentialsId: '4bb34d9c-6c43-4110-bbc1-8cf0f820367d', path: '', url: 'http://172.31.39.248:8080')], contextPath: 'ram', war: '**/*.war'
     }
 }
